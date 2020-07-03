@@ -22,10 +22,8 @@ class Data:
         #dset = torch.datasets.ImageFolder(data_dir, transform)
         #dataloader = torch.utils.data.DataLoader(dset, batch_size=128, shuffle=True, num_workers=opt.workers)
 
-        dataset = torchvision.datasets.FashionMNIST('../data',
-                                                    train=True, download=True,
-                                                    transform=transform)
-
+        #dataset = torchvision.datasets.FashionMNIST('../data', train=True, download=True,transform=transform)
+        dataset = torchvision.datasets.MNIST('../data', train=True, download=True,transform=transform)
         dataloader = torch.utils.data.DataLoader(dataset,
                                                   batch_size=opt.batch_size,
                                                   shuffle=True, drop_last=True)

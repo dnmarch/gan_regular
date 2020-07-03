@@ -21,6 +21,7 @@ def loss_nonsat(g, d, x_real, device):
 def loss_wgan(g, d, x_real, device):
     batch_size = x_real.shape[0]
     z = torch.randn(batch_size, g.z_dim, 1, 1, device=device)
+
     x_fake = g(z)
     d_real = d(x_real)
     d_fake = d(x_fake)
@@ -35,5 +36,6 @@ def loss_wgan(g, d, x_real, device):
     grad_norm = grad[0].reshape(batch_size, -1).norm(dim=1)
     d_loss = (d_fake - d_real).mean() + gamma * ((grad_norm - 1) ** 2).mean()
     g_loss = -d_fake.mean()
+
     return d_loss, g_loss
 

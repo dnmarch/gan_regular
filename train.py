@@ -38,7 +38,7 @@ def train(loss, data_loader, optim, opt):
     #channel = image[0].shape[1]
     plot_image(image)
     channel = opt.channel
-    netg = Generator(channel, 100).to(opt.device)
+    netg = Generator(channel, opt.z_dim).to(opt.device)
     netd = Discriminator(channel).to(opt.device)
     netg.apply(weight_init)
     netd.apply(weight_init)

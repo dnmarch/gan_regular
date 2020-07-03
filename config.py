@@ -15,5 +15,6 @@ class Config:
     clamp_num = 0.01  # WGAN clip gradient
     device = "cuda"
     channel = 1
+    z_dim = 100
 
 opt = Config()
