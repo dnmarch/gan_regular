@@ -9,7 +9,7 @@ from pylab import plt
 import tqdm
 from model.loss import *
 
-opt = Config()
+
 
 def weight_init(m):
     # weight_initialization: important for wgan
@@ -20,8 +20,7 @@ def weight_init(m):
         m.weight.data.normal_(1.0,0.02)
 
 
-def plot_image(g, x_real):
-    batch_size = x_real
+def plot_image(g, batch_size, device):
     z_test = torch.randn(batch_size, g.z_dim, 1, 1, device=device)
     with torch.no_grad():
         g.eval()
@@ -32,7 +31,7 @@ def plot_image(g, x_real):
         g.train()
 
 
-def train(loss, data_loader, optim):
+def train(loss, data_loader, optim, opt):
     netg = Generator(3, 100).to(opt.device)
     netd = Discriminator(3).to(opt.device)
     netg.apply(weight_init)
@@ -61,10 +60,7 @@ def train(loss, data_loader, optim):
 
         print("epoch: %d, d_loss: %.3f, g_loss: %.3f"%(i, d_loss, g_loss))
         if (i + 1) % 5 or i == opt.max_epoch - 1:
-            plot_image(netg, x_real)
+            plot_image(netg, 36, opt.device)
 
 
-
-
-data_loader = Data.build_data()
-train(loss_wgan, data_loader, torch.optim.RMSprop)
+    return netd, netg
