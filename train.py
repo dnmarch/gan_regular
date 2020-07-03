@@ -61,7 +61,7 @@ def train(loss, data_loader, optim):
 
         print("epoch: %d, d_loss: %.3f, g_loss: %.3f"%(i, d_loss, g_loss))
         if (i + 1) % 5 or i == opt.max_epoch - 1:
-            plot_image(g, x_real)
+            plot_image(netg, x_real)
 
 
 
