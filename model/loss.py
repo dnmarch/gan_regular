@@ -1,5 +1,6 @@
 import torch
 from torch.nn import functional as F
+torch.autograd.set_detect_anomaly(True)
 
 
 def loss_nonsat(g, d, x_real, device):
