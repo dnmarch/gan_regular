@@ -17,7 +17,7 @@ def weight_init(m):
 
 
 def plot_image_test(g, batch_size, device):
-    z_test = torch.randn(batch_size, g.z_dim, 1, 1, device=device)
+    z_test = torch.randn(batch_size, g.z_dim, device=device)
     with torch.no_grad():
         g.eval()
         x_test = (g(z_test) + 1) / 2.
