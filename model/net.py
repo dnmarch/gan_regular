@@ -67,8 +67,8 @@ class Discriminator(nn.Module):
             # The output of D is no longer a probability, we do not apply sigmoid at the output of D.
             nn.Conv2d(in_channels=1024, out_channels=1, kernel_size=4, stride=1, padding=0))
 
-    def forward(self, x):
-        x = self.main_module(x)
+    def forward(self, input):
+        x = self.main_module(input)
         return self.output(x)
 
     def feature_extraction(self, x):
