@@ -28,4 +28,5 @@ class Data:
                                                   batch_size=opt.batch_size,
                                                   shuffle=True, drop_last=True)
 
+
         return dataloader
