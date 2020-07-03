@@ -60,16 +60,14 @@ class Discriminator(nn.Module):
             # State (512x8x8)
             nn.Conv2d(in_channels=512, out_channels=1024, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(1024, affine=True),
-            nn.LeakyReLU(0.2))
-        # output of main module --> State (1024x4x4)
-
-        self.output = nn.Sequential(
-            # The output of D is no longer a probability, we do not apply sigmoid at the output of D.
+            nn.LeakyReLU(0.2)
+            # output of main module --> State (1024x4x4)
             nn.Conv2d(in_channels=1024, out_channels=1, kernel_size=4, stride=1, padding=0))
 
+
     def forward(self, input):
-        x = self.main_module(input)
-        return self.output(x)
+        return self.main_module(input)
+
 
     def feature_extraction(self, x):
         # Use discriminator for feature extraction then flatten to vector of 16384
