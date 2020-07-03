@@ -5,9 +5,9 @@ class Generator(nn.Module):
     def __init__(self, channels, z_dim):
         super().__init__()
         self.z_dim = z_dim
-        channel_1 = 128
-        channel_2 = 200
-        channel_3 = 256
+        channel_1 = 12
+        channel_2 = 20
+        channel_3 = 25
         channel_4 = 32
 
         self.main_module = nn.Sequential(
@@ -48,9 +48,9 @@ class Generator(nn.Module):
 class Discriminator(nn.Module):
     def __init__(self, channels):
         super().__init__()
-        channel_1 = 128
-        channel_2 = 256
-        channel_3 = 100
+        channel_1 = 12
+        channel_2 = 25
+        channel_3 = 10
         self.main_module = nn.Sequential(
             # Omitting batch normalization in critic because our new penalized training objective (WGAN with gradient penalty) is no longer valid
             # in this setting, since we penalize the norm of the critic's gradient with respect to each input independently and not the enitre batch.
