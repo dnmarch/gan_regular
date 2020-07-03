@@ -1,16 +1,12 @@
 import torch
 from torchvision import transforms
-from torchvision.utils import make_grid
 from torchvision.datasets import CIFAR10
-import torchvision
-from config import Config
 import os
 
 class Data:
     @staticmethod
-    def build_data():
+    def build_data(opt):
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-        opt = Config()
         transform = transforms.Compose([
             transforms.Resize(opt.image_size),
             transforms.ToTensor(),
