@@ -65,8 +65,8 @@ def train(loss, data_loader, optim, opt):
             g_optimizer.step()
 
         print("epoch: %d, d_loss: %.3f, g_loss: %.3f"%(i, d_loss, g_loss))
-        if (i + 1) % 5 or i == opt.max_epoch - 1:
-            plot_image(netg, 36, opt.device)
+        if (i + 1) % 2 or i == opt.max_epoch - 1:
+            plot_image_test(netg, 36, opt.device)
 
 
     return netd, netg
