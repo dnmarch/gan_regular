@@ -30,6 +30,7 @@ def loss_wgan(g, d, x_real, device):
     d_r = d(x_r)
 
     grad = torch.autograd.grad(d_r.sum(), x_r, create_graph=True)
+    print(len(grad))
     grad_norm = grad[0].reshape(batch_size, -1).norm(dim=1)
     d_loss = (d_fake - d_real).mean() + gamma * ((grad_norm - 1) ** 2).mean()
     g_loss = -d_fake.mean()

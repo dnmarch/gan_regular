@@ -8,17 +8,17 @@ class Generator(nn.Module):
         self.main_module = nn.Sequential(
             nn.ConvTranspose2d(in_channels=z_dim, out_channels=1024, kernel_size=4, stride=1, padding=0),
             nn.BatchNorm2d(num_features=1024),
-            nn.ReLU(True),
+            nn.ReLU(),
 
             # State (1024x4x4)
             nn.ConvTranspose2d(in_channels=1024, out_channels=512, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(num_features=512),
-            nn.ReLU(True),
+            nn.ReLU(),
 
             # State (512x8x8)
             nn.ConvTranspose2d(in_channels=512, out_channels=256, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(num_features=256),
-            nn.ReLU(True),
+            nn.ReLU(),
 
             # State (256x16x16)
             #nn.ConvTranspose2d(in_channels=256, out_channels=channels, kernel_size=4, stride=2, padding=1)
@@ -26,7 +26,7 @@ class Generator(nn.Module):
 
             nn.ConvTranspose2d(in_channels=256, out_channels=32, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(num_features=32),
-            nn.ReLU(True),
+            nn.ReLU(),
 
             nn.ConvTranspose2d(in_channels=32, out_channels=channels, kernel_size=4, stride=2, padding=1),
 
@@ -50,17 +50,17 @@ class Discriminator(nn.Module):
             # Image (Cx32x32)
             nn.Conv2d(in_channels=channels, out_channels=256, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(256, affine=True),
-            nn.LeakyReLU(0.2, inplace=True),
+            nn.LeakyReLU(0.2),
 
             # State (256x16x16)
             nn.Conv2d(in_channels=256, out_channels=512, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(512, affine=True),
-            nn.LeakyReLU(0.2, inplace=True),
+            nn.LeakyReLU(0.2),
 
             # State (512x8x8)
             nn.Conv2d(in_channels=512, out_channels=1024, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(1024, affine=True),
-            nn.LeakyReLU(0.2, inplace=True))
+            nn.LeakyReLU(0.2))
         # output of main module --> State (1024x4x4)
 
         self.output = nn.Sequential(
