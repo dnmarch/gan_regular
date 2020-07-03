@@ -14,5 +14,6 @@ class Config:
     gpu = True  # use gpu or not
     clamp_num = 0.01  # WGAN clip gradient
     device = "cuda"
+    channel = 1
 
 opt = Config()

@@ -1,13 +1,9 @@
-import torch
-from torch.optim import RMSprop
-from config import Config
-from model.data_loader import Data
 from model.net import Generator, Discriminator
-from torch.autograd import Variable
+from model.loss import *
 from torchvision.utils import make_grid
 from pylab import plt
 import tqdm
-from model.loss import *
+
 
 
 
@@ -20,7 +16,7 @@ def weight_init(m):
         m.weight.data.normal_(1.0,0.02)
 
 
-def plot_image(g, batch_size, device):
+def plot_image_test(g, batch_size, device):
     z_test = torch.randn(batch_size, g.z_dim, 1, 1, device=device)
     with torch.no_grad():
         g.eval()
@@ -30,10 +26,20 @@ def plot_image(g, batch_size, device):
         plt.show()
         g.train()
 
+def plot_image(x_real):
+    x_real = (x_real + 1) / 2
+    imgs = make_grid(x_real.data * 0.5 + 0.5).cpu()  # CHW
+    plt.imshow(imgs.permute(1, 2, 0).numpy())  # HWC
+    plt.show()
+
 
 def train(loss, data_loader, optim, opt):
-    netg = Generator(3, 100).to(opt.device)
-    netd = Discriminator(3).to(opt.device)
+    image, _ = next(iter(data_loader))
+    #channel = image[0].shape[1]
+    plot_image(image)
+    channel = opt.channel
+    netg = Generator(channel, 100).to(opt.device)
+    netd = Discriminator(channel).to(opt.device)
     netg.apply(weight_init)
     netd.apply(weight_init)
 
