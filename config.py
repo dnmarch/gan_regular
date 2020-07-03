@@ -2,7 +2,7 @@ class Config:
     image_size = None
     lr = 0.00005
     nz = 100  # noise dimension
-    image_size = 64
+    image_size = 28
     image_size2 = 64
     nc = 3  # chanel of img
     ngf = 64  # generate channel

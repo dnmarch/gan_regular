@@ -10,4 +10,4 @@ opt = Config()
 opt.max_epoch = 20
 data_loader = Data.build_data(opt)
 #print(next(iter(data_loader)))
-g, d = train(loss_wgan, data_loader, torch.optim.RMSprop, opt)
+d, g = train(loss_wgan, data_loader, torch.optim.RMSprop, opt)
