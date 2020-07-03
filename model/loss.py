@@ -1,5 +1,6 @@
 import torch
 from torch.nn import functional as F
+
 torch.autograd.set_detect_anomaly(True)
 
 
@@ -25,13 +26,12 @@ def loss_wgan(g, d, x_real, device):
     d_fake = d(x_fake)
 
     alpha = torch.rand(batch_size, 1, 1, 1, device=device)
-    #print(z.shape, x_real.shape, x_fake.shape)
+
     x_r = alpha * x_real + (1 - alpha) * x_fake
     gamma = 10
     d_r = d(x_r)
 
     grad = torch.autograd.grad(d_r.sum(), x_r, create_graph=True)
-    print(len(grad))
     grad_norm = grad[0].reshape(batch_size, -1).norm(dim=1)
     d_loss = (d_fake - d_real).mean() + gamma * ((grad_norm - 1) ** 2).mean()
     g_loss = -d_fake.mean()

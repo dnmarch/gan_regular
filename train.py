@@ -20,6 +20,17 @@ def weight_init(m):
         m.weight.data.normal_(1.0,0.02)
 
 
+def plot_image(g, x_real):
+    batch_size = x_real
+    z_test = torch.randn(batch_size, g.z_dim, 1, 1, device=device)
+    with torch.no_grad():
+        g.eval()
+        x_test = (g(z_test) + 1) / 2.
+        imgs = make_grid(x_test.data * 0.5 + 0.5).cpu()  # CHW
+        plt.imshow(imgs.permute(1, 2, 0).numpy())  # HWC
+        plt.show()
+        g.train()
+
 
 def train(loss, data_loader, optim):
     netg = Generator(3, 100).to(opt.device)
@@ -33,20 +44,27 @@ def train(loss, data_loader, optim):
 
     for i in range(opt.max_epoch):
         for x_real, y_real in tqdm.tqdm(data_loader):
-            #print(len(x_real))
-            #print(y_real)
+
             x_real, y_real = x_real.to(opt.device), y_real.to(opt.device)
+
             d_loss, g_loss = loss(netg, netd, x_real, opt.device)
 
             d_optimizer.zero_grad()
             d_loss.backward(retain_graph=True)
             d_optimizer.step()
 
+            d_loss, g_loss = loss(netg, netd, x_real, opt.device)
+
             g_optimizer.zero_grad()
             g_loss.backward(retain_graph=True)
             g_optimizer.step()
 
         print("epoch: %d, d_loss: %.3f, g_loss: %.3f"%(i, d_loss, g_loss))
+        if (i + 1) % 5 or i == opt.max_epoch - 1:
+            plot_image(g, x_real)
+
+
+
 
 data_loader = Data.build_data()
 train(loss_wgan, data_loader, torch.optim.RMSprop)

@@ -5,28 +5,33 @@ class Generator(nn.Module):
     def __init__(self, channels, z_dim):
         super().__init__()
         self.z_dim = z_dim
+        channel_1 = 128
+        channel_2 = 200
+        channel_3 = 256
+        channel_4 = 32
+
         self.main_module = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=z_dim, out_channels=1024, kernel_size=4, stride=1, padding=0),
-            nn.BatchNorm2d(num_features=1024),
-            nn.ReLU(),
+            nn.ConvTranspose2d(in_channels=z_dim, out_channels=channel_1, kernel_size=4, stride=1, padding=0),
+            nn.BatchNorm2d(num_features=channel_1),
+            nn.ReLU(True),
 
             # State (1024x4x4)
-            nn.ConvTranspose2d(in_channels=1024, out_channels=512, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(num_features=512),
-            nn.ReLU(),
+            nn.ConvTranspose2d(in_channels=channel_1, out_channels=channel_2, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=channel_2),
+            nn.ReLU(True),
 
             # State (512x8x8)
-            nn.ConvTranspose2d(in_channels=512, out_channels=256, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(num_features=256),
-            nn.ReLU(),
+            nn.ConvTranspose2d(in_channels=channel_2, out_channels=channel_3, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=channel_3),
+            nn.ReLU(True),
 
             # State (256x16x16)
             #nn.ConvTranspose2d(in_channels=256, out_channels=channels, kernel_size=4, stride=2, padding=1)
             # out_channels = 3, get back to 3x32x32
 
-            nn.ConvTranspose2d(in_channels=256, out_channels=32, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(num_features=32),
-            nn.ReLU(),
+            nn.ConvTranspose2d(in_channels=channel_3, out_channels=channel_4, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=channel_4),
+            nn.ReLU(True),
 
             nn.ConvTranspose2d(in_channels=32, out_channels=channels, kernel_size=4, stride=2, padding=1),
 
@@ -43,26 +48,30 @@ class Generator(nn.Module):
 class Discriminator(nn.Module):
     def __init__(self, channels):
         super().__init__()
+        channel_1 = 128
+        channel_2 = 256
+        channel_3 = 100
         self.main_module = nn.Sequential(
             # Omitting batch normalization in critic because our new penalized training objective (WGAN with gradient penalty) is no longer valid
             # in this setting, since we penalize the norm of the critic's gradient with respect to each input independently and not the enitre batch.
             # There is not good & fast implementation of layer normalization --> using per instance normalization nn.InstanceNorm2d()
             # Image (Cx32x32)
-            nn.Conv2d(in_channels=channels, out_channels=256, kernel_size=4, stride=2, padding=1),
-            nn.InstanceNorm2d(256, affine=True),
+            nn.Conv2d(in_channels=channels, out_channels=channel_1, kernel_size=4, stride=2, padding=1),
+            nn.InstanceNorm2d(channel_1, affine=True),
             nn.LeakyReLU(0.2),
 
             # State (256x16x16)
-            nn.Conv2d(in_channels=256, out_channels=512, kernel_size=4, stride=2, padding=1),
-            nn.InstanceNorm2d(512, affine=True),
+            nn.Conv2d(in_channels=channel_1, out_channels=channel_2, kernel_size=4, stride=2, padding=1),
+            nn.InstanceNorm2d(channel_2, affine=True),
             nn.LeakyReLU(0.2),
 
             # State (512x8x8)
-            nn.Conv2d(in_channels=512, out_channels=1024, kernel_size=4, stride=2, padding=1),
-            nn.InstanceNorm2d(1024, affine=True),
-            nn.LeakyReLU(0.2)
+            nn.Conv2d(in_channels=channel_2, out_channels=channel_3, kernel_size=4, stride=2, padding=1),
+            nn.InstanceNorm2d(channel_3, affine=True),
+            nn.LeakyReLU(0.2),
             # output of main module --> State (1024x4x4)
-            nn.Conv2d(in_channels=1024, out_channels=1, kernel_size=4, stride=1, padding=0))
+            nn.Conv2d(in_channels=channel_3, out_channels=1, kernel_size=4, stride=1, padding=0)
+        )
 
 
     def forward(self, input):
