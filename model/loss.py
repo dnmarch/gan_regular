@@ -18,12 +18,19 @@ def loss_nonsat(g, d, x_real, device):
     return d_loss, g_loss
 
 
+
+
 def loss_wgan(g, d, x_real, device):
     batch_size = x_real.shape[0]
     #z = torch.randn(batch_size, g.z_dim, 1, 1, device=device)
-    z = torch.randn(batch_size, g.z_dim, device=device)
-    x_fake = g(z)
+    #z = torch.randn(batch_size, g.z_dim, device=device)
     d_real = d(x_real)
+
+    d_real_sigmoid = F.sigmoid(d_real)
+    z = torch.rand_like(d_real_sigmoid, device=device)*0.2 + d_real_sigmoid
+
+    x_fake = g(z)
+
     d_fake = d(x_fake)
 
     alpha = torch.rand(batch_size, 1, 1, 1, device=device)

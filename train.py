@@ -16,14 +16,23 @@ def weight_init(m):
         m.weight.data.normal_(1.0,0.02)
 
 
-def plot_image_test(g, batch_size, device):
-    z_test = torch.randn(batch_size, g.z_dim, device=device)
+def plot_image_test(g, d, x_real, batch_size, device):
+    x_real = x_real[:batch_size]
     with torch.no_grad():
+        d.eval()
         g.eval()
-        x_test = (g(z_test) + 1) / 2.
+
+        d_real = d(x_real)
+        d_real_sigmoid = F.sigmoid(d_real)
+        z = torch.rand_like(d_real_sigmoid, device=device) * 0.2 + d_real_sigmoid
+        x_fake = g(z)
+
+        x_test = (x_fake + 1) / 2.
         imgs = make_grid(x_test.data * 0.5 + 0.5).cpu()  # CHW
         plt.imshow(imgs.permute(1, 2, 0).numpy())  # HWC
         plt.show()
+
+        d.train()
         g.train()
 
 def plot_image(x_real):
@@ -34,12 +43,12 @@ def plot_image(x_real):
 
 
 def train(loss, data_loader, optim, opt):
-    image, _ = next(iter(data_loader))
+    #image, _ = next(iter(data_loader))
     #channel = image[0].shape[1]
-    plot_image(image)
+    #plot_image(image)
     channel = opt.channel
     netg = Generator(channel, opt.z_dim).to(opt.device)
-    netd = Discriminator(channel).to(opt.device)
+    netd = Discriminator(channel, opt.z_dim).to(opt.device)
     netg.apply(weight_init)
     netd.apply(weight_init)
 
@@ -65,8 +74,8 @@ def train(loss, data_loader, optim, opt):
             g_optimizer.step()
 
         print("epoch: %d, d_loss: %.3f, g_loss: %.3f"%(i, d_loss, g_loss))
-        if (i + 1) % 2 or i == opt.max_epoch - 1:
-            plot_image_test(netg, 36, opt.device)
+        #if (i + 1) % 2 or i == opt.max_epoch - 1:
+        plot_image_test(netg, netd, x_real, 36, opt.device)
 
 
     return netd, netg

@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class Generator2(nn.Module):
     def __init__(self, channels, z_dim):
         super().__init__()
@@ -26,7 +27,7 @@ class Generator2(nn.Module):
             nn.ReLU(True),
 
             # State (256x16x16)
-            #nn.ConvTranspose2d(in_channels=256, out_channels=channels, kernel_size=4, stride=2, padding=1)
+            # nn.ConvTranspose2d(in_channels=256, out_channels=channels, kernel_size=4, stride=2, padding=1)
             # out_channels = 3, get back to 3x32x32
 
             nn.ConvTranspose2d(in_channels=channel_3, out_channels=channel_4, kernel_size=4, stride=2, padding=1),
@@ -38,7 +39,6 @@ class Generator2(nn.Module):
         )
 
         self.output = nn.Tanh()
-
 
     def forward(self, input):
         x = self.main_module(input)
@@ -73,10 +73,8 @@ class Discriminator2(nn.Module):
             nn.Conv2d(in_channels=channel_3, out_channels=1, kernel_size=4, stride=1, padding=0)
         )
 
-
     def forward(self, input):
         return self.main_module(input)
-
 
     def feature_extraction(self, x):
         # Use discriminator for feature extraction then flatten to vector of 16384
@@ -84,13 +82,14 @@ class Discriminator2(nn.Module):
         return x.view(-1, 1024 * 4 * 4)
 
 
-
 class Reshape(torch.nn.Module):
     def __init__(self, *shape):
         super().__init__()
         self.shape = shape
+
     def forward(self, x):
         return x.reshape(x.size(0), *self.shape)
+
 
 class Generator(torch.nn.Module):
     def __init__(self, num_channels=1, dim_z=64):
@@ -118,8 +117,9 @@ class Generator(torch.nn.Module):
     def forward(self, z):
         return self.net(z)
 
+
 class Discriminator(torch.nn.Module):
-    def __init__(self, num_channels=1):
+    def __init__(self, num_channels=1, out_dim=512):
         super().__init__()
         self.net = torch.nn.Sequential(
             torch.nn.Conv2d(1, 32, kernel_size=4, stride=2, padding=1),
@@ -132,8 +132,8 @@ class Discriminator(torch.nn.Module):
             torch.nn.Linear(64 * 7 * 7, 512),
             torch.nn.LeakyReLU(0.1, inplace=True),
 
-            torch.nn.Linear(512, 1),
-            Reshape()
+            torch.nn.Linear(512, out_dim)
+            #Reshape()
         )
 
     def forward(self, x):
