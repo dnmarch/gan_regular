@@ -29,6 +29,8 @@ def loss_wgan(g, d, x_real, device):
     d_real_sigmoid = F.sigmoid(d_real)
     z = torch.rand_like(d_real_sigmoid, device=device)*0.2 + d_real_sigmoid
 
+    z = z[torch.randperm(z.size(0))]
+
     x_fake = g(z)
 
     d_fake = d(x_fake)
